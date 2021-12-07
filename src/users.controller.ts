@@ -1,23 +1,22 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
-import User from './user.entity';
 
 @Controller('/api/users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  getUsers(): string {
-    return this.usersService.getUsers();
+  async getUsers(): Promise<string> {
+    try {
+      const users = await this.usersService.getUsers();
+
+      return JSON.stringify(users);
+    } catch (error) {
+      return JSON.stringify({ error: 'Failed to get users' });
+    }
   }
 
-  @Get(':userid')
-  async getUser(@Param('userid') userid: number): Promise<string> {
-    return await this.usersService.getUser(userid);
-  }
-
-  @Get('/crate')
-  // @Post()
+  @Get('/create')
   async createUser(): Promise<string> {
     try {
       const result = await this.usersService.addUser({
@@ -25,11 +24,20 @@ export class UsersController {
         age: 21,
       });
 
-      return result;
-    } catch (err) {
-      console.log(err);
-
+      return JSON.stringify(result);
+    } catch (error) {
       return JSON.stringify({ error: 'Failed to create user' });
+    }
+  }
+
+  @Get(':userid')
+  async getUser(@Param('userid') userid: number): Promise<string> {
+    try {
+      const user = await this.usersService.getUser(userid);
+
+      return JSON.stringify(user);
+    } catch (error) {
+      return JSON.stringify({ error: 'Failed to get user by id' });
     }
   }
 }
