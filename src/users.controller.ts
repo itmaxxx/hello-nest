@@ -1,43 +1,69 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
+import { Response } from 'express';
+import { CreateUserDto } from './create-user.dto';
 
 @Controller('/api/users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  async getUsers(): Promise<string> {
+  async getUsers(@Res() res: Response) {
     try {
       const users = await this.usersService.getUsers();
 
-      return JSON.stringify(users);
+      return res.status(HttpStatus.OK).json(users);
     } catch (error) {
-      return JSON.stringify({ error: 'Failed to get users' });
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Failed to get users',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
-  @Get('/create')
-  async createUser(): Promise<string> {
+  @Post('/create')
+  async createUser(@Res() res, @Body() createUserDto: CreateUserDto) {
     try {
-      const result = await this.usersService.addUser({
-        fullname: 'Max Dmitriev',
-        age: 21,
-      });
+      const createdUser = await this.usersService.addUser(createUserDto);
 
-      return JSON.stringify(result);
+      return res.status(HttpStatus.CREATED).json(createdUser);
     } catch (error) {
-      return JSON.stringify({ error: 'Failed to create user' });
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Failed to create user',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
   @Get(':userid')
-  async getUser(@Param('userid') userid: number): Promise<string> {
+  async getUser(@Res() res: Response, @Param('userid') userid: number) {
     try {
       const user = await this.usersService.getUser(userid);
 
-      return JSON.stringify(user);
+      return res.status(HttpStatus.OK).json(user);
     } catch (error) {
-      return JSON.stringify({ error: 'Failed to get user by id' });
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Failed to get user',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }
