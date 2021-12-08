@@ -12,7 +12,6 @@ export class AppController {
 
   @Get('/first-letter/:age')
   getFirstLetter(@Param('age') age: number, @Query('name') name: string): string {
-
     return `${this.appService.getUserFirstLetterOfTheName(name)} ${age}`;
   }
 }
