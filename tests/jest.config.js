@@ -10,4 +10,5 @@ module.exports = {
   },
   testRegex: ".+(\.e2e-spec).[jt]sx?$",
   moduleFileExtensions: ['ts', 'js', 'html'],
+  globalSetup: '<rootDir>/../jest.global.setup.ts',
 };

@@ -5,12 +5,8 @@ import { UsersModule } from '../src/users.module';
 import { DatabaseModule } from '../src/database.module';
 import { AppController } from '../src/app.controller';
 import { AppService } from '../src/app.service';
-import dotenv from 'dotenv';
-
-dotenv.config({ path: __dirname + '/../.env' });
 
 describe('UsersController (e2e)', () => {
-
   let app: INestApplication;
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({

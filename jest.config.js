@@ -9,4 +9,5 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
+  globalSetup: '<rootDir>/jest.global.setup.ts',
 };
