@@ -1,4 +1,7 @@
 import { Connection } from 'typeorm';
+import { Seeder } from './seeders/seeder';
+import User from '../models/user.entity';
+import { users } from '../fixtures/users';
 
 export class DbManager {
   constructor(
@@ -19,5 +22,10 @@ export class DbManager {
 
       this.logger.log(`deleted ${this.entities[i].name}`);
     }
+  }
+
+  async seed() {
+    const usersSeeder = new Seeder(this.connection, this.logger);
+    await usersSeeder.seed(User, users);
   }
 }
