@@ -5,17 +5,14 @@ import { UsersModule } from '../src/users.module';
 import { DatabaseModule } from '../src/database.module';
 import { AppController } from '../src/app.controller';
 import { AppService } from '../src/app.service';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: __dirname + '/../.env' });
 
 describe('UsersController (e2e)', () => {
+
   let app: INestApplication;
-
   beforeEach(async () => {
-    process.env.POSTGRES_HOST = 'localhost';
-    process.env.POSTGRES_PORT = '5432';
-    process.env.POSTGRES_USER = 'admin';
-    process.env.POSTGRES_PASSWORD = 'admin';
-    process.env.POSTGRES_DB = 'nestjs';
-
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [UsersModule, DatabaseModule],
       controllers: [AppController],
