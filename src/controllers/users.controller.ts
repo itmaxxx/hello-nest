@@ -8,9 +8,9 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from '../services/users.service';
 import { Response } from 'express';
-import { CreateUserDto } from './create-user.dto';
+import { CreateUserDto } from '../models/create-user.dto';
 
 @Controller('/api/users')
 export class UsersController {

@@ -1,10 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { UsersModule } from '../src/users.module';
-import { DatabaseModule } from '../src/database.module';
-import { AppController } from '../src/app.controller';
-import { AppService } from '../src/app.service';
+import { UsersModule } from '../src/modules/users.module';
+import { DatabaseModule } from '../src/modules/database.module';
+import { AppController } from '../src/controllers/app.controller';
+import { AppService } from '../src/services/app.service';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication;

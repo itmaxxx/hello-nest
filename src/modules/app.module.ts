@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from '../controllers/app.controller';
+import { AppService } from '../services/app.service';
 import { UsersModule } from './users.module';
 import { ConfigModule } from '@nestjs/config';
 import Joi from '@hapi/joi';
