@@ -18,19 +18,19 @@ export class UsersService {
     return { users };
   }
 
-  async getUser(userid: number): Promise<{ user: User }> {
+  async getUser(userid: string): Promise<User> {
     const user = await this.usersRepository.findOne(userid);
 
-    return { user };
+    return user;
   }
 
-  async addUser(createUserDto: CreateUserDto): Promise<{ user: User }> {
+  async addUser(createUserDto: CreateUserDto): Promise<User> {
     const createdUser = this.usersRepository.create({
       ...createUserDto,
       id: uniqid(),
     });
     await this.usersRepository.save(createdUser);
 
-    return { user: createdUser };
+    return createdUser;
   }
 }
