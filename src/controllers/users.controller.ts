@@ -25,7 +25,6 @@ export class UsersController {
     } catch (error) {
       throw new HttpException(
         {
-          status: HttpStatus.BAD_REQUEST,
           error: 'Failed to get users',
         },
         HttpStatus.BAD_REQUEST,
@@ -33,16 +32,15 @@ export class UsersController {
     }
   }
 
-  @Post('/create')
+  @Post()
   async createUser(@Res() res, @Body() createUserDto: CreateUserDto) {
     try {
       const createdUser = await this.usersService.addUser(createUserDto);
 
-      return res.status(HttpStatus.CREATED).json(createdUser);
+      return res.status(HttpStatus.CREATED).json({ user: createdUser });
     } catch (error) {
       throw new HttpException(
         {
-          status: HttpStatus.BAD_REQUEST,
           error: 'Failed to create user',
         },
         HttpStatus.BAD_REQUEST,
@@ -51,19 +49,20 @@ export class UsersController {
   }
 
   @Get(':userid')
-  async getUser(@Res() res: Response, @Param('userid') userid: number) {
+  async getUser(@Res() res: Response, @Param('userid') userid: string) {
     try {
       const user = await this.usersService.getUser(userid);
 
-      return res.status(HttpStatus.OK).json(user);
+      if (!user) {
+        return res.status(HttpStatus.NOT_FOUND).json({
+          message: 'User not found',
+          statusCode: HttpStatus.NOT_FOUND,
+        });
+      }
+
+      return res.status(HttpStatus.OK).json({ user });
     } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Failed to get user',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Failed to get user', HttpStatus.NOT_FOUND);
     }
   }
 }

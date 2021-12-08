@@ -20,6 +20,7 @@ import User from '../models/user.entity';
         // ],
         entities: [User],
         synchronize: true,
+        keepConnectionAlive: true,
       }),
     }),
   ],
