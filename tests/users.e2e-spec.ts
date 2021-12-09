@@ -18,8 +18,6 @@ describe('UsersController (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [UsersModule, DatabaseModule],
-      controllers: [AppController],
-      providers: [AppService],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -62,7 +60,9 @@ describe('UsersController (e2e)', () => {
     it('should create new user', async () => {
       const userToCreate: CreateUserDto = {
         fullname: 'Matvey Gorelik',
+        username: 'offiza',
         age: 20,
+        password: 'pizza'
       };
 
       const response = await request(app.getHttpServer())

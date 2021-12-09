@@ -9,7 +9,13 @@ class User {
   public fullname: string;
 
   @Column()
+  public username: string;
+
+  @Column()
   public age: number;
+
+  @Column()
+  public password: string;
 }
 
 export default User;

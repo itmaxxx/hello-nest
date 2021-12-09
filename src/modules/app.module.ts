@@ -5,6 +5,7 @@ import { UsersModule } from './users.module';
 import { ConfigModule } from '@nestjs/config';
 import Joi from '@hapi/joi';
 import { DatabaseModule } from './database.module';
+import { AuthModule } from './auth.module';
 
 @Module({
   imports: [
@@ -16,9 +17,11 @@ import { DatabaseModule } from './database.module';
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
         PORT: Joi.number(),
+        JWT_SECRET: Joi.string().required(),
       }),
     }),
     UsersModule,
+    AuthModule,
     DatabaseModule,
   ],
   controllers: [AppController],

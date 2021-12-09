@@ -21,7 +21,7 @@ export class UsersController {
     try {
       const users = await this.usersService.getUsers();
 
-      return res.status(HttpStatus.OK).json(users);
+      return res.status(HttpStatus.OK).json({ users });
     } catch (error) {
       throw new HttpException(
         {
