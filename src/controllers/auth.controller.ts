@@ -14,7 +14,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('check')
+  @Post('check')
   async checkAuth(@Request() req) {
     return req.user;
   }

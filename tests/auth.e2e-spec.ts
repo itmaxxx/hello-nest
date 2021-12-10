@@ -62,7 +62,7 @@ describe('AuthController (e2e)', () => {
     it('should access endpoint with jwt token', async () => {
       const jwtService = new JwtService({
         secret: process.env.JWT_SECRET,
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: '60m' },
       });
 
       const payload = {
@@ -75,16 +75,16 @@ describe('AuthController (e2e)', () => {
       // expect(jwt).toEqual({});
 
       const response = await request(app.getHttpServer())
-        .get('/api/auth/check')
-        // .set('Authorization', `Bearer ${jwt}`)
-        .auth(jwt, { type: 'bearer' });
+        .post('/api/auth/check')
+        .set('Authorization', `Bearer ${jwt}`);
+        // .auth(jwt, { type: 'bearer' });
 
       expect(response.body).toEqual({});
     });
 
     it('should show error when user is unauthorized', async () => {
       await request(app.getHttpServer())
-        .get('/api/auth/check')
+        .post('/api/auth/check')
         .expect(HttpStatus.UNAUTHORIZED)
         .expect((res) =>
           expect(res.body).toEqual(
