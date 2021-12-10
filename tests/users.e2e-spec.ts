@@ -1,16 +1,14 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { UsersModule } from '../src/modules/users.module';
 import { DatabaseModule } from '../src/modules/database.module';
-import { AppController } from '../src/controllers/app.controller';
-import { AppService } from '../src/services/app.service';
 import { MaxDmitriev, users } from '../src/fixtures/users';
 import { CreateUserDto } from '../src/models/create-user.dto';
-import { DbManager } from "../src/database/dbManager";
-import { getConnection } from "typeorm";
-import User from "../src/models/user.entity";
-import { SilenceLogger } from "../src/database/loggers/silence.logger";
+import { DbManager } from '../src/database/dbManager';
+import { getConnection } from 'typeorm';
+import User from '../src/models/user.entity';
+import { SilenceLogger } from '../src/database/loggers/silence.logger';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication;
@@ -21,9 +19,18 @@ describe('UsersController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        stopAtFirstError: true,
+      }),
+    );
     await app.init();
 
-    const dbManager = new DbManager(getConnection(), [User], new SilenceLogger());
+    const dbManager = new DbManager(
+      getConnection(),
+      [User],
+      new SilenceLogger(),
+    );
     await dbManager.clear();
     await dbManager.seed();
   });
@@ -62,15 +69,40 @@ describe('UsersController (e2e)', () => {
         fullname: 'Matvey Gorelik',
         username: 'offiza',
         age: 20,
-        password: 'pizza'
+        password: 'pizza',
       };
 
-      const response = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .post('/api/users')
         .send(userToCreate)
-        .expect(HttpStatus.CREATED);
+        .expect(HttpStatus.CREATED)
+        .expect((res) =>
+          expect(res.body.user).toEqual(expect.objectContaining(userToCreate)),
+        );
+    });
 
-      expect(response.body.user).toEqual(expect.objectContaining(userToCreate));
+    it('should return validation errors when fields missing or not set', async () => {
+      const userToCreate = {
+        fullname: 12,
+        age: '20a',
+        password: 'pizza',
+      };
+
+      await request(app.getHttpServer())
+        .post('/api/users')
+        .send(userToCreate)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect((res) => {
+          expect(res.body).toEqual({
+            error: 'Bad Request',
+            message: [
+              'fullname must be longer than or equal to 3 characters',
+              'username must be longer than or equal to 3 characters',
+              'age must be a number conforming to the specified constraints',
+            ],
+            statusCode: 400,
+          });
+        });
     });
   });
 });

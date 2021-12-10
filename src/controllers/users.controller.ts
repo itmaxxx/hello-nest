@@ -7,6 +7,8 @@ import {
   Param,
   Post,
   Res,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { Response } from 'express';
@@ -33,6 +35,7 @@ export class UsersController {
   }
 
   @Post()
+  @UsePipes(new ValidationPipe({ transform: true }))
   async createUser(@Res() res, @Body() createUserDto: CreateUserDto) {
     try {
       const createdUser = await this.usersService.addUser(createUserDto);
