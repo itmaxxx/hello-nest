@@ -9,6 +9,7 @@ import request from 'supertest';
 import { MaxDmitriev } from '../src/fixtures/users';
 import { AuthModule } from '../src/modules/auth.module';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from '../src/models/create-user.dto';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -87,6 +88,74 @@ describe('AuthController (e2e)', () => {
             expect.objectContaining({
               message: 'Unauthorized',
               statusCode: HttpStatus.UNAUTHORIZED,
+            }),
+          ),
+        );
+    });
+  });
+
+  describe('[POST] /api/auth/register', () => {
+    it('should register user', async () => {
+      const userToRegister: CreateUserDto = {
+        username: 'user',
+        fullname: 'John Cocker',
+        password: 'johnyboy',
+      };
+
+      await request(app.getHttpServer())
+        .post('/api/auth/register')
+        .send(userToRegister)
+        .expect(HttpStatus.CREATED)
+        .expect((res) => {
+          expect(res.body).toEqual(
+            expect.objectContaining({
+              user: {
+                ...res.body.user,
+                ...userToRegister,
+              },
+            }),
+          );
+        })
+        .expect((res) => {
+          expect(res.body.access_token).toBeDefined();
+        });
+    });
+
+    it('should show error when username is taken', async () => {
+      const userToRegister: CreateUserDto = {
+        username: MaxDmitriev.username,
+        fullname: 'John Cocker',
+        password: 'johnyboy',
+      };
+
+      await request(app.getHttpServer())
+        .post('/api/auth/register')
+        .send(userToRegister)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect((res) =>
+          expect(res.body).toEqual(
+            expect.objectContaining({
+              message: 'Username already taken',
+              statusCode: HttpStatus.BAD_REQUEST,
+            }),
+          ),
+        );
+    });
+
+    it('should show error missing required fields', async () => {
+      const userToRegister = {
+        username: 'user',
+      };
+
+      await request(app.getHttpServer())
+        .post('/api/auth/register')
+        .send(userToRegister)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect((res) =>
+          expect(res.body).toEqual(
+            expect.objectContaining({
+              message: 'Required fields are absent',
+              statusCode: HttpStatus.BAD_REQUEST,
             }),
           ),
         );
