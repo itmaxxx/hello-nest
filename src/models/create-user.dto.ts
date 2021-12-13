@@ -12,7 +12,7 @@ export class CreateUserDto {
   username: string;
 
   @IsNumber()
-  age: number;
+  age?: number;
 
   @IsNotEmpty()
   @IsString()

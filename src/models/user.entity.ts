@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 class User {
@@ -11,7 +11,7 @@ class User {
   @Column()
   public username: string;
 
-  @Column()
+  @Column({ nullable: true })
   public age: number;
 
   @Column()

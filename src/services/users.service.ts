@@ -20,11 +20,11 @@ export class UsersService {
     return await this.usersRepository.find();
   }
 
-  async getUser(userid: string): Promise<User | undefined> {
+  async findUserById(userid: string): Promise<User | undefined> {
     return await this.usersRepository.findOne(userid);
   }
 
-  async addUser(createUserDto: CreateUserDto): Promise<User> {
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
     const createdUser = this.usersRepository.create({
       ...createUserDto,
       id: uniqid(),

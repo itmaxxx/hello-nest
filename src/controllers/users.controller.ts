@@ -38,7 +38,7 @@ export class UsersController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async createUser(@Res() res, @Body() createUserDto: CreateUserDto) {
     try {
-      const createdUser = await this.usersService.addUser(createUserDto);
+      const createdUser = await this.usersService.createUser(createUserDto);
 
       return res.status(HttpStatus.CREATED).json({ user: createdUser });
     } catch (error) {
@@ -54,7 +54,7 @@ export class UsersController {
   @Get(':userid')
   async getUser(@Res() res: Response, @Param('userid') userid: string) {
     try {
-      const user = await this.usersService.getUser(userid);
+      const user = await this.usersService.findUserById(userid);
 
       if (!user) {
         return res.status(HttpStatus.NOT_FOUND).json({
