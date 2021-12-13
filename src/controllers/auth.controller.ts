@@ -1,7 +1,14 @@
-import { Controller, Post, UseGuards, Request, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  HttpStatus, Res
+} from "@nestjs/common";
 import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthService } from '../services/auth.service';
+import { Response } from 'express';
 
 @Controller('api/auth')
 export class AuthController {
@@ -14,8 +21,8 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('check')
-  async checkAuth(@Request() req) {
-    return req.user;
+  @Post('me')
+  async checkAuth(@Request() req, @Res() res: Response) {
+    return res.status(HttpStatus.OK).json({ user: req.user });
   }
 }

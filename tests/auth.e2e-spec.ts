@@ -58,33 +58,29 @@ describe('AuthController (e2e)', () => {
     });
   });
 
-  describe('[GET] /api/auth/check', () => {
+  describe('[POST] /api/auth/me', () => {
     it('should access endpoint with jwt token', async () => {
       const jwtService = new JwtService({
         secret: process.env.JWT_SECRET,
-        signOptions: { expiresIn: '60m' },
+        signOptions: { expiresIn: '30m' },
       });
 
       const payload = {
-        sub: MaxDmitriev.id,
+        id: MaxDmitriev.id,
         username: MaxDmitriev.username,
       };
       const jwt = jwtService.sign(payload);
 
-      // expect(jwtService.verify(jwt)).toEqual({});
-      // expect(jwt).toEqual({});
-
-      const response = await request(app.getHttpServer())
-        .post('/api/auth/check')
-        .set('Authorization', `Bearer ${jwt}`);
-        // .auth(jwt, { type: 'bearer' });
-
-      expect(response.body).toEqual({});
+      await request(app.getHttpServer())
+        .post('/api/auth/me')
+        .auth(jwt, { type: 'bearer' })
+        .expect(HttpStatus.OK)
+        .expect({ user: { id: 'v3v845pxkwy2qsx1', username: 'itmax' } });
     });
 
     it('should show error when user is unauthorized', async () => {
       await request(app.getHttpServer())
-        .post('/api/auth/check')
+        .post('/api/auth/me')
         .expect(HttpStatus.UNAUTHORIZED)
         .expect((res) =>
           expect(res.body).toEqual(
